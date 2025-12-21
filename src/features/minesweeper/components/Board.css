@@ -1,0 +1,5 @@
+.minesweeperRow {
+    display: flex;
+    gap: 2px;
+    marginBottom: 2px;
+}
