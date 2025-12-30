@@ -63,7 +63,7 @@ export function generateBoard(width: number, height: number, mines: number) : Ce
 }
 
 export function createStateMatrix(width: number, height: number): CellUIState[][] {
-  return Array.from({length: height}, () => Array(width).fill("clicked"))
+  return Array.from({length: height}, () => Array(width).fill("asleep"))
 }
 
 export function getStateForCellInfo(cellInfo: CellInfo, stateMatrix: CellUIState[][]) {
@@ -74,4 +74,73 @@ export function getStateForId(id: number, stateMatrix: CellUIState[][]): CellUIS
   const y = Math.floor(id / 100)
   const x = id % 100
   return stateMatrix[y][x]
+}
+
+export function revealFlood(cellInfo: CellInfo, boardMatrix: CellInfo[][], cellStateMatrix: CellUIState[][]) : CellUIState[][] {
+  const height = boardMatrix.length
+  const width = boardMatrix[0].length
+
+  const revealQueue: CellInfo[] = [cellInfo]
+  const visited = new Map<number, boolean>
+
+  const newCellState = structuredClone(cellStateMatrix)
+
+  const moves: [number, number][] = [
+    [-1, -1], [0, -1], [1, -1],
+    [-1, 0], [1, 0],
+    [-1, 1], [0, 1], [1, 1]
+  ]
+
+  while (revealQueue.length > 0) {
+    const temp = revealQueue.shift()
+
+    if (visited.has(temp!.id)) {
+      continue
+    }
+
+    visited.set(temp!.id, true)
+    const oldState = getStateForCellInfo(temp!, cellStateMatrix)
+
+    newCellState[temp!.y][temp!.x] = 'clicked'
+
+    // if (oldState === 'asleep') {
+    //   newCellState[temp!.y][temp!.x] = 'clicked'
+    // } else {
+    //   newCellState[temp!.y][temp!.x] = 'asleep'
+    // }
+
+    if (temp!.bombsNearby === 0) {
+      for (const [x_add, y_add] of moves) {
+        const new_y = temp!.y + y_add
+        const new_x = temp!.x + x_add
+
+        if (new_x >= 0 && new_x < width) {
+          if (new_y >= 0 && new_y < height) {
+            revealQueue.push(boardMatrix[new_y][new_x])
+          }
+        }
+      }
+    }
+  }
+
+  return newCellState
+}
+
+export function explosionReveal(explosion: CellInfo, cellStateMatrix: CellUIState[][]): CellUIState[][] {
+  const height = cellStateMatrix.length
+  const width = cellStateMatrix[0].length
+
+  const newCellState = structuredClone(cellStateMatrix)
+
+  for (let y_=0; y_<height; y_++){
+    for (let x_=0; x_<width; x_++) {
+      if (x_ === explosion.x && y_ === explosion.y) {
+        newCellState[y_][x_] = 'exploded'
+      } else {
+        newCellState[y_][x_] = 'clicked'
+      }
+    }
+  }
+
+  return newCellState
 }

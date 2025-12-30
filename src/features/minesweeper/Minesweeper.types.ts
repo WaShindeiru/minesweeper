@@ -1,4 +1,4 @@
-export type CellUIState = 'asleep' | 'clicked' | 'flagged'
+export type CellUIState = 'asleep' | 'clicked' | 'flagged' | 'exploded'
 
 export type CellInfo = {
   id: number,

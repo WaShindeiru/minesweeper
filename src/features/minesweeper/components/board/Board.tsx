@@ -1,13 +1,13 @@
-import type {CellInfo, CellUIState} from "../Minesweeper.types.ts";
+import type {CellInfo, CellUIState} from "../../Minesweeper.types.ts";
 import Cell from "./Cell.tsx";
-import {getStateForCellInfo} from "../Minesweeper.logic.ts";
+import {getStateForCellInfo} from "../../Minesweeper.logic.ts";
 import "./Board.css"
 
 type BoardProps = {
   boardMatrix: CellInfo[][],
   cellStateMatrix: CellUIState[][],
-  handleLeftClick: (cellInfo: CellInfo, cellState: CellUIState) => void,
-  handleRightClick: (cellInfo: CellInfo, cellState: CellUIState) => void,
+  handleLeftClick: (cellInfo: CellInfo) => void,
+  handleRightClick: (cellInfo: CellInfo) => void,
 }
 
 export default function Board({
