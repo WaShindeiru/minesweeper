@@ -8,13 +8,15 @@ type BoardProps = {
   cellStateMatrix: CellUIState[][],
   handleLeftClick: (cellInfo: CellInfo) => void,
   handleRightClick: (cellInfo: CellInfo) => void,
+  handleMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void,
 }
 
 export default function Board({
   boardMatrix,
   cellStateMatrix,
   handleLeftClick,
-  handleRightClick
+  handleRightClick,
+  handleMouseDown,
 }: BoardProps) {
 
   return (
@@ -28,6 +30,7 @@ export default function Board({
               state={getStateForCellInfo(cell, cellStateMatrix)}
               onClick={handleLeftClick}
               onRightClick={handleRightClick}
+              onMouseDown_={handleMouseDown}
             ></Cell>
           ))}
         </div>

@@ -1,0 +1,5 @@
+.clock-container {
+    display: flex;
+    flex-direction: row; /* This is default, can be omitted */
+    justify-content: space-between; /* This does the magic! */
+}

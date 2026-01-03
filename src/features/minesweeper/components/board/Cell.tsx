@@ -7,6 +7,7 @@ type CellProps = {
   state: CellUIState,
   onClick: (cellInfo: CellInfo) => void,
   onRightClick: (cellInfo: CellInfo) => void,
+  onMouseDown_: (event: React.MouseEvent<HTMLDivElement>) => void,
 }
 
 export default function Cell({
@@ -14,6 +15,7 @@ export default function Cell({
   state,
   onClick,
   onRightClick,
+  onMouseDown_,
 }: CellProps) {
   const handleLeftClick = (e: React.MouseEvent) => {
     console.log(`Left click, id: ${cellInfo.id}`);
@@ -82,6 +84,7 @@ export default function Cell({
     <div className={"cell"}
       onClick={handleLeftClick}
       onContextMenu={handleRightClick}
+      onMouseDown={onMouseDown_}
     >
       {content}
     </div>

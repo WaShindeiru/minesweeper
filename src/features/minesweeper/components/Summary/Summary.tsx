@@ -10,8 +10,8 @@ export default function Summary({
 
   return (
     <>
-      <div className={"summary"}>
-        <button onClick={onClick}>Restart</button>
+      <div className={"minesweeper-panel"}>
+        <button className={"minesweeper-btn"} onClick={onClick}>Restart</button>
       </div>
     </>
   )

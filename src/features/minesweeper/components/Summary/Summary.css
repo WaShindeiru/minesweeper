@@ -1,10 +1,91 @@
-.summary {
-    height: 100px;
-    width: 100px;
-    background-color: blue;
+.minesweeper-panel-old {
+    background: #c0c0c0;
+    border: 3px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding: 20px;
+    box-shadow: inset 1px 1px 0px #000000,
+    inset -1px -1px 0px #dfdfdf;
+
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.minesweeper-panel {
+    background: #c0c0c0;
+    border: 3px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 20px;
+    display: inline-block;
+    box-shadow: inset -1px -1px 0px #000000, inset 1px 1px 0px #dfdfdf;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.minesweeper-panel.pressed {
+    border-color: #808080 #ffffff #ffffff #808080;
+    box-shadow: inset 1px 1px 0px #000000,
+    inset -1px -1px 0px #dfdfdf;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.summary {
+    height: 60px;
+    width: 160px;
+    background-color: #797373;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.minesweeper-btn {
+    background: #c0c0c0;
+    border: 3px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 10px 20px;
+    font-family: 'MS Sans Serif', 'Segoe UI', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    box-shadow: 1px 1px 0px #000;
+}
+
+.minesweeper-btn:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+    transform: translate(1px, 1px);
+    box-shadow: none;
+}
+
+.minesweeper-btn:hover:not(:active) {
+    background: #d0d0d0;
 }
