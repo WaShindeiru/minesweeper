@@ -76,20 +76,24 @@ export function getStateForId(id: number, stateMatrix: CellUIState[][]): CellUIS
   return stateMatrix[y][x]
 }
 
-export function revealFlood(cellInfo: CellInfo, boardMatrix: CellInfo[][], cellStateMatrix: CellUIState[][]) : CellUIState[][] {
+export function revealFlood(cellInfo: CellInfo, boardMatrix: CellInfo[][], cellStateMatrix: CellUIState[][]):
+  [CellUIState[][], number] {
+
   const height = boardMatrix.length
   const width = boardMatrix[0].length
 
   const revealQueue: CellInfo[] = [cellInfo]
   const visited = new Map<number, boolean>
 
-  const newCellState = structuredClone(cellStateMatrix)
+  const newCellUIState = structuredClone(cellStateMatrix)
 
   const moves: [number, number][] = [
     [-1, -1], [0, -1], [1, -1],
     [-1, 0], [1, 0],
     [-1, 1], [0, 1], [1, 1]
   ]
+
+  let revealedCount = 0
 
   while (revealQueue.length > 0) {
     const temp = revealQueue.shift()
@@ -101,7 +105,8 @@ export function revealFlood(cellInfo: CellInfo, boardMatrix: CellInfo[][], cellS
     visited.set(temp!.id, true)
     const oldState = getStateForCellInfo(temp!, cellStateMatrix)
 
-    newCellState[temp!.y][temp!.x] = 'clicked'
+    newCellUIState[temp!.y][temp!.x] = 'clicked'
+    revealedCount += 1
 
     // if (oldState === 'asleep') {
     //   newCellState[temp!.y][temp!.x] = 'clicked'
@@ -123,7 +128,7 @@ export function revealFlood(cellInfo: CellInfo, boardMatrix: CellInfo[][], cellS
     }
   }
 
-  return newCellState
+  return [newCellUIState, revealedCount]
 }
 
 export function explosionReveal(explosion: CellInfo, cellStateMatrix: CellUIState[][]): CellUIState[][] {

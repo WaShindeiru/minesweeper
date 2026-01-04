@@ -30,10 +30,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .minesweeper-panel.pressed {
@@ -47,6 +43,22 @@
     transform: translate(-50%, -50%);
     z-index: 10;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.description-div {
+    height: 32px;
+
+    font-family: 'MS Sans Serif', 'Segoe UI', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    text-align: center
+}
+
+.button-div {
     display: flex;
     justify-content: center;
     align-items: center;

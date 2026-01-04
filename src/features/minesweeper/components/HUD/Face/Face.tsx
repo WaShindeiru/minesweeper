@@ -4,11 +4,13 @@ import {type JSX, useState} from "react";
 
 type FaceProps = {
   faceState: FaceState
+  onFaceClick: () => void
 }
 
 export default function Face(
   {
-    faceState
+    faceState,
+    onFaceClick,
   }: FaceProps
 ) {
   const [isPressed, setIsPressed] = useState<boolean>(false)
@@ -59,6 +61,7 @@ export default function Face(
         className={"face-div"}
         onMouseDown={() => setIsPressed(true)}
         onMouseUp={() => setIsPressed(false)}
+        onClick={onFaceClick}
       >
         {faceImage}
       </div>

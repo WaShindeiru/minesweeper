@@ -8,12 +8,14 @@ type HUDProps = {
   timeElapsedMs: number,
   NumOfBombs: number,
   faceState: FaceState,
+  onFaceClick: () => void,
 }
 
 export default function HUD({
   timeElapsedMs,
   NumOfBombs,
-  faceState
+  faceState,
+  onFaceClick,
                             }: HUDProps) {
 
   return (
@@ -23,7 +25,10 @@ export default function HUD({
           <Clock elapsedTime={timeElapsedMs}></Clock>
         </div>
         <div className={"middle-element"}>
-          <Face faceState={faceState}>
+          <Face
+            faceState={faceState}
+            onFaceClick={onFaceClick}
+          >
           </Face>
         </div>
         <div className={"right-element"}>

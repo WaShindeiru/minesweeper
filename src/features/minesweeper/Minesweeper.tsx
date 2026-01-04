@@ -1,5 +1,11 @@
 import {useEffect, useRef, useState} from "react";
-import {createStateMatrix, generateBoard, revealFlood, explosionReveal} from "./Minesweeper.logic.ts";
+import {
+  createStateMatrix,
+  generateBoard,
+  revealFlood,
+  explosionReveal,
+  getStateForCellInfo
+} from "./Minesweeper.logic.ts";
 import type {CellInfo, CellUIState, FaceState, GameState} from "./Minesweeper.types.ts";
 import Board from "./components/board/Board.tsx";
 import HUD from "./components/HUD/HUD.tsx";
@@ -20,9 +26,11 @@ export default function Minesweeper({
   const [boardMatrix, setBoardMatrix] = useState(() => generateBoard(width, height, numOfBombs))
   const [cellStateMatrix, setCellStateMatrix] = useState(() => createStateMatrix(width, height))
   const [numOfBombsRemaining, setNumOfBombsRemaining] = useState(numOfBombs)
-  const [tileClearedIndex, setTileClearedIndex] = useState(0)
+
+  const faceTimeoutRef = useRef<number | null>(null);
 
   const [gameState, setGameState] = useState<GameState>("before")
+  const [hiddenTiles, setHiddenTiles] = useState<number>(width * height - numOfBombs)
 
   const [faceState, setFaceState] = useState<FaceState>("happy")
 
@@ -36,7 +44,7 @@ export default function Minesweeper({
         setCurrentTime(new Date())
       }, 1000)
 
-    } else if (gameState === 'ended') {
+    } else if (gameState === 'ILost' || gameState === 'IWon') {
       if (timerRef.current) {
         clearInterval(timerRef.current)
         timerRef.current = null
@@ -51,11 +59,20 @@ export default function Minesweeper({
     }
   }, [gameState])
 
-  function handleMouseDown(event: React.MouseEvent<HTMLDivElement>) {
+  function handleMouseDown(event: React.MouseEvent<HTMLDivElement>, state: CellUIState) {
     if (gameState === 'before' || gameState === "started") {
-      if (event.button === 0) {
-        setFaceState("confused")
+      if (state === 'asleep' || state === "flagged") {
+        if (event.button === 0) {
+          setFaceState("confused")
+        }
       }
+    }
+  }
+
+  function cancelFaceTimeout() {
+    if (faceTimeoutRef.current) {
+      clearTimeout(faceTimeoutRef.current)
+      faceTimeoutRef.current = null;
     }
   }
 
@@ -72,16 +89,24 @@ export default function Minesweeper({
         const newCellStateMatrix = explosionReveal(cellInfo, cellStateMatrix)
 
         setCellStateMatrix(newCellStateMatrix)
-        setGameState('ended')
+        setGameState('ILost')
         setFaceState("dead")
 
       } else {
-        const newStateMatrix = revealFlood(cellInfo, boardMatrix, cellStateMatrix)
-        setCellStateMatrix(newStateMatrix)
-        setFaceState("cool")
-        setTimeout(() => {
-          setFaceState("happy")
-        }, 2000)
+        const state = getStateForCellInfo(cellInfo, cellStateMatrix)
+        if (state === 'asleep' || state === 'flagged') {
+          const [newStateMatrix, revealedCount] = revealFlood(cellInfo, boardMatrix, cellStateMatrix)
+          setCellStateMatrix(newStateMatrix)
+          setHiddenTiles(hiddenTiles - revealedCount)
+
+          setFaceState("cool")
+
+          cancelFaceTimeout()
+
+          faceTimeoutRef.current = setTimeout(() => {
+            setFaceState("happy")
+          }, 4000)
+        }
 
       }
     }
@@ -117,6 +142,14 @@ export default function Minesweeper({
     setFaceState("happy")
   }
 
+  if (gameState === "started") {
+    if (numOfBombsRemaining === 0) {
+      if (hiddenTiles === 0) {
+        setGameState("IWon") // Is that the sundays reference???
+      }
+    }
+  }
+
   let elapsedTime: number
   if (gameState === "before") {
     elapsedTime = 0
@@ -127,22 +160,24 @@ export default function Minesweeper({
   return (
     <>
       <div className={"gameContainer"}>
-        {(gameState === "ended") && <Summary
-        onClick={restartGame}
+          {(gameState === "ILost" || gameState === "IWon") && <Summary
+          onClick={restartGame}
+          gameState={gameState}
         >
         </Summary>}
         <HUD
-        timeElapsedMs={elapsedTime}
-        NumOfBombs={numOfBombsRemaining}
-        faceState={faceState}
+          onFaceClick={() => restartGame()}
+          timeElapsedMs={elapsedTime}
+          NumOfBombs={numOfBombsRemaining}
+          faceState={faceState}
         >
         </HUD>
         <Board
-        boardMatrix={boardMatrix}
-        cellStateMatrix={cellStateMatrix}
-        handleLeftClick={handleLeftClick}
-        handleRightClick={handleRightClick}
-        handleMouseDown={handleMouseDown}
+          boardMatrix={boardMatrix}
+          cellStateMatrix={cellStateMatrix}
+          handleLeftClick={handleLeftClick}
+          handleRightClick={handleRightClick}
+          handleMouseDown={handleMouseDown}
         >
         </Board>
       </div>
